@@ -6,11 +6,16 @@
     <title>@yield('title', 'My App')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     @stack('styles')
+
+
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg ">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('welcome') }}">MyApp</a>
+        <a class="navbar-brand" href="{{ route('welcome') }}">
+            <img src="{{ asset('images/logo-1.png') }}" alt="Example Image" style="width: 100px; height: auto;">
+        </a>
+
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <!-- @auth

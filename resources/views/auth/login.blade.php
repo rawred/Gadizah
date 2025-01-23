@@ -54,5 +54,6 @@
     .btn-login {
         width: 100%;
     }
+
 </style>
 @endpush

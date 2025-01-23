@@ -15,14 +15,16 @@ use App\Http\Controllers\RegisterController;
 |
 */
 
-Route::get('/welcome', function () {
+Route::get('/', function () {
     return view('welcome');
-})->middleware('auth')->name('welcome');
+})->name('welcome');
+
 
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
