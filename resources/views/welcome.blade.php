@@ -108,12 +108,15 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <h1 class="display-4">Welcome to ShopNow</h1>
+            <h1 class="display-4">Selamat Datang di <br> Gadizah HomemadeFood</h1>
             <p class="lead">Find the best products at unbeatable prices.</p>
             <button type="button" class="btn btn-outline-light">Shop Now!</button>
         </div>
     </section>
 
+    <section class="menu-section">
+        Menu Kami!
+    </section>
     <!-- Footer -->
     <footer class="bg-light py-4">
         <div class="container text-center">
