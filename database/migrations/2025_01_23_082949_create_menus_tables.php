@@ -12,9 +12,9 @@ class CreateMenusTables extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('price', 8, 2);
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->timestamps();
-        });
+        });        
     }
 
     public function down()

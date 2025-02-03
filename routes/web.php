@@ -16,10 +16,7 @@ use App\Http\Controllers\MenuController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
-
+Route::get('/', [AuthController::class, 'welcome'])->name('welcome');
 
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -34,6 +31,7 @@ Route::middleware('auth')->group(function () {
     })->name('welcome');
 });
 
+Route::post('/menu', [MenuController::class, 'store'])->name('menu.store');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');

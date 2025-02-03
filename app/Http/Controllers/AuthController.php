@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Menu;
+
 
 class AuthController extends Controller
 {
@@ -11,6 +13,13 @@ class AuthController extends Controller
     {
         return view('auth.login');
     }
+
+    public function welcome()
+    {
+        $menus = Menu::all(); // Fetch menu items
+        return view('welcome', compact('menus')); // Pass the variable
+    }
+    
 
     public function login(Request $request)
     {

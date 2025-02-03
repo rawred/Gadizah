@@ -41,73 +41,141 @@
         <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addMenuModal">Add New Menu</button>
 
         <table id="menuTable" class="display table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Photo</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Example Row -->
-                <tr>
-                    <td>1</td>
-                    <td><img src="https://via.placeholder.com/100" alt="Menu Photo" width="100"></td>
-                    <td>Example Dish</td>
-                    <td>$10</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm">Edit</button>
-                        <button class="btn btn-danger btn-sm">Delete</button>
-                    </td>
-                </tr>
-                <!-- More rows will be dynamically loaded -->
-            </tbody>
-        </table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Photo</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($menus as $menu)
+            <tr id="menuRow{{ $menu->id }}">
+                <td>{{ $loop->iteration }}</td>
+                <td>
+                    <img src="{{ asset('storage/' . $menu->photo) }}" alt="{{ $menu->name }}" width="100">
+                </td>
+                <td>{{ $menu->name }}</td>
+                <td>Rp {{ number_format($menu->price, 0, ',', '.') }}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editMenuModal{{ $menu->id }}">Edit</button>
+                    <button class="btn btn-danger btn-sm delete-menu" data-id="{{ $menu->id }}">Delete</button>
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+
     </div>
 
-    <!-- Add Menu Modal -->
-    <div class="modal fade" id="addMenuModal" tabindex="-1" aria-labelledby="addMenuModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" action="{{ route('menu.store') }}" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addMenuModalLabel">Add New Menu</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="menuName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="menuName" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="menuPrice" class="form-label">Price</label>
-                            <input type="number" class="form-control" id="menuPrice" name="price" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="menuPhoto" class="form-label">Photo</label>
-                            <input type="file" class="form-control" id="menuPhoto" name="photo" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Add Menu</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+   <!-- Edit Menu Modal -->
+@foreach($menus as $menu)
+<div class="modal fade" id="editMenuModal{{ $menu->id }}" tabindex="-1" aria-labelledby="editMenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <form method="POST" action="{{ route('menu.update', $menu->id) }}" enctype="multipart/form-data">
+    @csrf
+    @method('PUT')
+    <div class="mb-3">
+    <label for="menuName{{ $menu->id }}" class="form-label">Name</label>
+    <input type="text" class="form-control" id="menuName{{ $menu->id }}" name="name" value="{{ $menu->name }}" required>
     </div>
+    <div class="mb-3">
+    <label for="menuPrice{{ $menu->id }}" class="form-label">Price</label>
+    <input type="number" class="form-control" id="menuPrice{{ $menu->id }}" name="price" value="{{ $menu->price }}" required>
+    </div>
+    <div class="mb-3">
+    <label for="menuPhoto{{ $menu->id }}" class="form-label">Photo</label>
+    <input type="file" class="form-control" id="menuPhoto{{ $menu->id }}" name="photo">
+    </div>
+    <button type="submit" class="btn btn-primary">Add Menu</button>
+</form>
+    </div>
+</div>
+@endforeach
+
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#menuTable').DataTable();
-        });
-    </script>
+$('#addMenuForm').submit(function(event) {
+    event.preventDefault();
+
+    let formData = new FormData(this);
+    
+    $.ajax({
+        url: "{{ route('menu.store') }}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            $('#menuTable tbody').append(`
+                <tr id="menu-${response.id}">
+                    <td>${response.id}</td>
+                    <td><img src="/storage/${response.photo}" width="100"></td>
+                    <td>${response.name}</td>
+                    <td>Rp ${response.price.toLocaleString('id-ID')}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm edit-menu" data-id="${response.id}">Edit</button>
+                        <button class="btn btn-danger btn-sm delete-menu" data-id="${response.id}">Delete</button>
+                    </td>
+                </tr>
+            `);
+            $('#addMenuModal').modal('hide');
+            $('#addMenuForm')[0].reset(); // Reset the form
+        },
+        error: function(xhr) {
+            alert("Failed to add menu: " + xhr.responseText);
+        }
+    });
+});
+
+$(document).on('click', '.delete-menu', function() {
+    let id = $(this).data('id');
+    $.ajax({
+        url: `/menu/${id}`,
+        type: "DELETE",
+        data: {_token: "{{ csrf_token() }}"},
+        success: function() {
+            $(`#menu-${id}`).remove();
+        }
+    });
+});
+
+</script>
+<!-- Place this just before closing </body> -->
+<div class="modal fade" id="addMenuModal" tabindex="-1" aria-labelledby="addMenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMenuModalLabel">Add New Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addMenuForm" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="menuName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="menuName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="menuPrice" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="menuPrice" name="price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="menuPhoto" class="form-label">Photo</label>
+                        <input type="file" class="form-control" id="menuPhoto" name="photo" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Menu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

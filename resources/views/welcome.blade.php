@@ -113,10 +113,28 @@
             <button type="button" class="btn btn-outline-light">Shop Now!</button>
         </div>
     </section>
+<!-- menu -->
 
-    <section class="menu-section">
-        Menu Kami!
-    </section>
+    <section class="container mt-4">
+    <h2 class="text-center mb-4">Our Menu</h2>
+    <div class="row">
+    @if(isset($menu))
+    @foreach($menus as $menu)
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <img src="{{ asset('storage/' . $menu->photo) }}" class="card-img-top" alt="{{ $menu->name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $menu->name }}</h5>
+                        <p class="card-text">Rp {{ number_format($menu->price, 0, ',', '.') }}</p>
+                        <button class="btn btn-primary">Order Now</button>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+        @endif
+    </div>
+</section>
+
     <!-- Footer -->
     <footer class="bg-light py-4">
         <div class="container text-center">
