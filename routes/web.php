@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\WelcomeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,23 +20,31 @@ use App\Http\Controllers\MenuController;
 */
 
 // Public Routes
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+Route::get('/', [WelcomeController::class, 'welcome'])->name('welcome');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Signup Routes
 Route::get('/signup', [RegisterController::class, 'showSignUpForm'])->name('signup');
 Route::post('/signup', [RegisterController::class, 'register']);
 
-// Admin Routes (Protected)
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+// Register Route (if needed)
+Route::get('/register', [RegisterController::class, 'showSignUpForm'])->name('register');
 
-    Route::prefix('admin')->group(function () {
-        Route::post('/menu/store', [MenuController::class, 'store'])->name('menu.store');
-    });
+// Profile Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/profile/settings', function () {
+        return view('profile.settings');
+    })->name('profile.settings');
 });
 
+// Admin Routes (Protected)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [MenuController::class, 'index'])->name('admin.dashboard');
+    Route::post('/admin/menu/store', [MenuController::class, 'store'])->name('menu.store');
+    Route::delete('/admin/menu/delete/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
+    Route::get('/admin/menu/edit/{id}', [MenuController::class, 'edit'])->name('menu.edit');
+    Route::put('/admin/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
+});

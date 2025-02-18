@@ -1,129 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Commerce Front Page</title>
+    <title>Gadizah Homemade Food</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
-        .navbar-brand {
+        @import url('https://fonts.googleapis.com/css2?family=Madimi+One&display=swap');
+
+        body {
+            font-family: "Madimi One", serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .navbar {
+            background-color: #D9D9D9;
+        }
+
+        .navbar-nav {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-left: -50px;
+        }
+
+        .ms-4 {
+            margin-right: -550px !important;
+            margin-left: 500px !important;
+        }
+
+        /* HERO SECTION */
+        .hero-section {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            min-height: 500px;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3)), url('../images/food-1.png') center/cover no-repeat;
+            color: white;
+            padding: 60px 5%;
+            position: relative;
+        }
+
+        /* HERO TEXT */
+        .hero-text {
+            max-width: 50%;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-size: 2.8rem;
             font-weight: bold;
         }
 
-        .hero-section {
-            background: linear-gradient(135deg, #ed5e29, #f6b042), url('https://via.placeholder.com/1920x600');
-            background-size: cover;
-            background-position: center;
+        .hero-text p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .hero-buttons .btn {
+            margin-right: 10px;
+            font-size: 1rem;
+            padding: 10px 20px;
+            border-radius: 25px;
+        }
+
+        /* HERO BUTTONS */
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .hero-buttons .btn {
+            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .register-button {
+            background-color: #D85A2D;
             color: white;
+        }
+
+        .login-button {
+            background-color: #D9D9D9;
+            color: black;
+        }
+
+        /* HERO IMAGE */
+        .hero-image {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* MENU SECTION */
+        .menu-section {
+            margin-top: 5rem;
+            width: 100%;
+        }
+
+        .menu-title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .menu-title {
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 0 20px;
+            background-color: white;
+            z-index: 1;
+        }
+
+        .menu-line {
+            flex-grow: 1;
+            height: 5px;
+            background-color: #D85A2D;
+        }
+
+        .menu-category {
+            text-align: left;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .underline {
+            width: 100px;
+            height: 5px;
+            background-color: #D85A2D;
+            margin-top: 5px;
+        }
+
+        .menu-item {
+            border-radius: 10px;
+            overflow: hidden;
+            transition: 0.3s;
+            background-color: #f8f9fa;
             text-align: center;
-            padding: 100px 0;
+            padding: 15px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            position: relative;
         }
 
-        .product-card {
-            transition: transform 0.3s;
+        .menu-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
         }
 
-        .product-card:hover {
-            transform: scale(1.05);
+        .menu-item .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
         }
 
-        .profile-sidebar {
-            width: 250px;
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+            text-align: center;
         }
 
-        .profile-picture {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin: 20px auto;
-            display: block;
+        .menu-item:hover .overlay {
+            opacity: 1;
+        }
+
+        .overlay-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .overlay-description {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .overlay-price {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: #D85A2D;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #c54a1d;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: #f5f5f5;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        /* RESPONSIVE FIX */
+        @media (max-width: 768px) {
+            .hero-section {
+                flex-direction: column;
+                text-align: center;
+                padding: 40px 10%;
+            }
+
+            .hero-text {
+                max-width: 100%;
+            }
+
+            .hero-image {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">ShopNow</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="{{ url('/') }}">
+                <img src="{{ asset('images/logo-1.png') }}" alt="Logo" style="width: 100px; height: auto;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto me-3">
+                <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
-                                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
-                            </svg>
-                        </a>
+                        <a class="nav-link" href="#">Menu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart3" viewBox="0 0 16 16">
-                                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                            </svg>
-                        </a>
+                        <a class="nav-link" href="#">About</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                    @auth
+                        <li class="nav-item ms-4">
+                            <button class="btn btn-outline-dark" data-bs-toggle="offcanvas"
+                                data-bs-target="#profileSidebar">
+                                <i class="bi bi-person-circle"></i>
+                            </button>
+                        </li>
+                    @endauth
                 </ul>
-                <div class="d-flex">
-                    @guest
-                        <a href="{{ route('login') }}" class="btn btn-outline-primary">Login</a>
-                    @else
-                    <button class="btn btn-outline-primary" data-bs-toggle="offcanvas" data-bs-target="#profileSidebar" aria-controls="profileSidebar">
-                        Profile
-                    </button>
-
-                    @endguest
-                </div>
             </div>
         </div>
     </nav>
 
-<!-- Profile Sidebar -->
-<div class="offcanvas offcanvas-end profile-sidebar" tabindex="-1" id="profileSidebar" aria-labelledby="profileSidebarLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="profileSidebarLabel">Profile</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body text-center">
-        @auth
-            <img src="https://via.placeholder.com/80" alt="Profile Picture" class="profile-picture">
-            <h5>{{ Auth::user()->name }}</h5>
-            <p>{{ Auth::user()->email }}</p>
-            <a href="#" class="btn btn-secondary mb-3">Profile Settings</a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
-        @endauth
-
-        @guest
-            <p>Please log in to view your profile.</p>
-        @endguest
-    </div>
-</div>
-
-
-
     <!-- Hero Section -->
     <section class="hero-section">
-        <div class="container">
-            <h1 class="display-4">Selamat Datang di <br> Gadizah HomemadeFood</h1>
-            <p class="lead">Find the best products at unbeatable prices.</p>
-            <button type="button" class="btn btn-outline-light">Shop Now!</button>
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6 hero-text">
+                    <h1>Selamat Datang di Gadizah Homemade Food!</h1>
+                    <p>Sudah punya akun? Silakan masuk atau daftar untuk pengalaman terbaik.</p>
+                    <div class="d-flex hero-buttons">
+                        @guest
+                            <a href="{{ route('register') }}" class="btn register-button">Daftar</a>
+                            <a href="{{ route('login') }}" class="btn login-button">Masuk</a>
+                        @endguest
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section class="menu-section">
-        Menu Kami!
-    </section>
-    <!-- Footer -->
-    <footer class="bg-light py-4">
-        <div class="container text-center">
-            <p>&copy; 2025 ShopNow. All rights reserved.</p>
+    <!-- Profile Sidebar -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="profileSidebar" aria-labelledby="profileSidebarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="profileSidebarLabel">Profile</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
+        <div class="offcanvas-body text-center Sidebar">
+            <!-- User Info -->
+            <i class="bi bi-person-circle" style="font-size: 4rem;"></i>
+            @if(Auth::check())
+                <h4 class="mt-2">{{ Auth::user()->name }}</h4>
+            @else
+                <h4 class="mt-2">Guest</h4>
+            @endif
+
+            <!-- Buttons -->
+            <div class="button">
+                <a href="{{ route('profile.settings') }}" class="btn btn-warning w-100 my-2">Settings</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger w-100 mt-5">Log Out</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Section -->
+    <section class="menu-section">
+        <div class="container">
+            <!-- Title -->
+            <div class="menu-title-wrapper">
+                <span class="menu-line"></span>
+                <h2 class="menu-title">MENU KAMI</h2>
+                <span class="menu-line"></span>
+            </div>
+
+            <!-- FOOD Category -->
+            <div class="menu-category">
+                <h3>FOOD</h3>
+                <div class="underline"></div>
+            </div>
+
+            <!-- Food Items -->
+            <div class="row">
+                @foreach($foodItems as $item)
+                    <div class="col-md-3">
+                        <div class="menu-item card" data-title="{{ $item->name }}" data-desc="{{ $item->description }}"
+                            data-price="{{ $item->price }}">
+                            <img src="{{ asset('storage/uploads/' . $item->photo) }}" class="card-img-top"
+                                alt="{{ $item->name }}" style="width: 100%; height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $item->name }}</h5>
+                            </div>
+                            <div class="overlay">
+                                <h2 class="overlay-title">{{ $item->name }}</h2>
+                                <p class="overlay-description">{{ $item->description }}</p>
+                                <p class="overlay-price"><strong>HARGA:</strong> {{ $item->price }}</p>
+                                <button class="btn btn-primary">Masukkan ke Keranjang</button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- BEVERAGE Category -->
+            <div class="menu-category">
+                <h3>BEVERAGE</h3>
+                <div class="underline"></div>
+            </div>
+
+            <!-- Beverage Items -->
+            <div class="row">
+                @foreach($beverageItems as $item)
+                    <div class="col-md-3">
+                        <div class="menu-item card" data-title="{{ $item->name }}" data-desc="{{ $item->description }}"
+                            data-price="{{ $item->price }}">
+                            <img src="{{ asset('storage/uploads/' . $item->photo) }}" class="card-img-top"
+                                alt="{{ $item->name }}" style="width: 100%; height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $item->name }}</h5>
+                            </div>
+                            <div class="overlay">
+                                <h2 class="overlay-title">{{ $item->name }}</h2>
+                                <p class="overlay-description">{{ $item->description }}</p>
+                                <p class="overlay-price"><strong>HARGA:</strong> {{ $item->price }}</p>
+                                <button class="btn btn-primary">Masukkan ke Keranjang</button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div>&copy; 2025 Gadizah Homemade Food. All rights reserved.</div>
     </footer>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add to Cart Functionality
+        document.addEventListener("DOMContentLoaded", function () {
+            const addToCartButtons = document.querySelectorAll(".btn-primary");
+
+            addToCartButtons.forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    const card = button.closest(".menu-item");
+                    const item = {
+                        title: card.getAttribute("data-title"),
+                        description: card.getAttribute("data-desc"),
+                        price: card.getAttribute("data-price"),
+                        image: card.querySelector("img").src
+                    };
+
+                    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+                    cart.push(item);
+                    localStorage.setItem("cart", JSON.stringify(cart));
+
+                    alert(`${item.title} telah ditambahkan ke keranjang!`);
+                });
+            });
+        });
+    </script>
 </body>
+
 </html>

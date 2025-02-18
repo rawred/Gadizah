@@ -12,10 +12,6 @@
 <body>
     <nav class="navbar navbar-expand-lg ">
         <div class="container">
-        <a class="navbar-brand" href="{{ route('welcome') }}">
-            <img src="{{ asset('images/logo-1.png') }}" alt="Example Image" style="width: 100px; height: auto;">
-        </a>
-
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <!-- @auth
