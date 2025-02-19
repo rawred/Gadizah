@@ -6,6 +6,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\CartController;
 
 
 /*
@@ -48,3 +49,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/menu/edit/{id}', [MenuController::class, 'edit'])->name('menu.edit');
     Route::put('/admin/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
 });
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('cart.add');

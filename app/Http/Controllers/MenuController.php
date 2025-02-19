@@ -45,23 +45,24 @@ class MenuController extends Controller
             'description' => 'nullable|string',
             'category' => 'required|in:FOOD,BEVERAGE',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'stock' => 'required|integer|min:0', // Add stock validation
         ]);
-
+    
         try {
             $menu = Menu::findOrFail($id);
             $imageName = $menu->photo;
-
+    
             // Handle new file upload
             if ($request->hasFile('photo')) {
                 // Delete old image
                 Storage::delete('public/uploads/' . $menu->photo);
-
+    
                 // Upload new image
                 $image = $request->file('photo');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $image->storeAs('public/uploads', $imageName);
             }
-
+    
             // Update database
             $menu->update([
                 'name' => $request->name,
@@ -69,8 +70,9 @@ class MenuController extends Controller
                 'description' => $request->description,
                 'category' => $request->category,
                 'photo' => $imageName,
+                'stock' => $request->stock, // Add stock
             ]);
-
+    
             return response()->json(['status' => 'success', 'message' => 'Menu updated successfully!']);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => 'Error updating menu: ' . $e->getMessage()], 500);
@@ -80,25 +82,25 @@ class MenuController extends Controller
     // Handle form submission to add a new menu item
     public function store(Request $request)
     {
-        // Validate the request
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
             'description' => 'nullable|string',
             'category' => 'required|in:FOOD,BEVERAGE',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'stock' => 'required|integer|min:0', // Add stock validation
         ]);
-
+    
         try {
             // Handle file upload
             if ($request->hasFile('photo')) {
                 $image = $request->file('photo');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/uploads', $imageName); // Save to storage/app/public/uploads
+                $image->storeAs('public/uploads', $imageName);
             } else {
                 throw new \Exception('No image file uploaded.');
             }
-
+    
             // Insert into database
             Menu::create([
                 'name' => $request->name,
@@ -106,12 +108,11 @@ class MenuController extends Controller
                 'description' => $request->description,
                 'category' => $request->category,
                 'photo' => $imageName,
+                'stock' => $request->stock, // Add stock
             ]);
-
-            // Return JSON response for AJAX
+    
             return response()->json(['status' => 'success', 'message' => 'Menu added successfully!']);
         } catch (\Exception $e) {
-            // Return JSON response for AJAX
             return response()->json(['status' => 'error', 'message' => 'Error adding menu: ' . $e->getMessage()], 500);
         }
     }
@@ -136,4 +137,6 @@ class MenuController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Error: ' . $e->getMessage()]);
         }
     }
+
+    
 }

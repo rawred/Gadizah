@@ -15,5 +15,6 @@ class Menu extends Model
         'description',
         'category',
         'photo',
+        'stock', // Add stock
     ];
 }

@@ -54,6 +54,7 @@
                     <th>Price</th>
                     <th>Description</th>
                     <th>Category</th>
+                    <th>Stock</th> <!-- Add Stock Column -->
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -66,6 +67,7 @@
                         <td>{{ $menu->price }}</td>
                         <td>{{ $menu->description }}</td>
                         <td>{{ $menu->category }}</td>
+                        <td>{{ $menu->stock }}</td> <!-- Display Stock -->
                         <td>
                             <button class="btn btn-warning btn-sm edit-btn" data-id="{{ $menu->id }}">Edit</button>
                             <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $menu->id }}">Delete</button>
@@ -106,6 +108,10 @@
                                 <option value="FOOD">Food</option>
                                 <option value="BEVERAGE">Beverage</option>
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_stock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="edit_stock" name="stock" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit_photo" class="form-label">Photo</label>
@@ -150,6 +156,10 @@
                                 <option value="FOOD">Food</option>
                                 <option value="BEVERAGE">Beverage</option>
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="menuStock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="menuStock" name="stock" required>
                         </div>
                         <div class="mb-3">
                             <label for="menuPhoto" class="form-label">Photo</label>
@@ -207,6 +217,7 @@
                         $('#edit_price').val(response.price);
                         $('#edit_description').val(response.description);
                         $('#edit_category').val(response.category);
+                        $('#edit_stock').val(response.stock); // Populate stock
                         $('#editMenuModal').modal('show');
                     },
                     error: function (xhr) {

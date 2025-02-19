@@ -32,6 +32,10 @@
             margin-left: 500px !important;
         }
 
+        .ms-2 {
+            margin-right: -480px !important;
+            margin-left: 500px !important;
+        }
         /* HERO SECTION */
         .hero-section {
             display: flex;
@@ -252,38 +256,45 @@
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">
-                <img src="{{ asset('images/logo-1.png') }}" alt="Logo" style="width: 100px; height: auto;">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Menu</a>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url('/') }}">
+            <img src="{{ asset('images/logo-1.png') }}" alt="Logo" style="width: 100px; height: auto;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+                @auth
+                                <!-- Cart Button -->
+                                <li class="nav-item ms-2">
+                    <a class="btn btn-outline-dark" href="{{ route('cart.index') }}">
+                        <i class="bi bi-cart"></i> Cart
+                    </a>
+                </li>
+
+                    <li class="nav-item ms-4">
+                        <button class="btn btn-outline-dark" data-bs-toggle="offcanvas"
+                            data-bs-target="#profileSidebar">
+                            <i class="bi bi-person-circle"></i>
+                        </button>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                    @auth
-                        <li class="nav-item ms-4">
-                            <button class="btn btn-outline-dark" data-bs-toggle="offcanvas"
-                                data-bs-target="#profileSidebar">
-                                <i class="bi bi-person-circle"></i>
-                            </button>
-                        </li>
-                    @endauth
-                </ul>
-            </div>
+                @endauth
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -405,30 +416,44 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Add to Cart Functionality
-        document.addEventListener("DOMContentLoaded", function () {
-            const addToCartButtons = document.querySelectorAll(".btn-primary");
+document.addEventListener("DOMContentLoaded", function () {
+    const addToCartButtons = document.querySelectorAll(".btn-primary");
 
-            addToCartButtons.forEach(button => {
-                button.addEventListener("click", function (event) {
-                    event.stopPropagation();
-                    const card = button.closest(".menu-item");
-                    const item = {
-                        title: card.getAttribute("data-title"),
-                        description: card.getAttribute("data-desc"),
-                        price: card.getAttribute("data-price"),
-                        image: card.querySelector("img").src
-                    };
+    addToCartButtons.forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.stopPropagation();
 
-                    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-                    cart.push(item);
-                    localStorage.setItem("cart", JSON.stringify(cart));
+            // Check if the user is authenticated
+            @auth
+                const card = button.closest(".menu-item");
+                const item = {
+                    id: card.getAttribute("data-id"),
+                    title: card.getAttribute("data-title"),
+                    description: card.getAttribute("data-desc"),
+                    price: card.getAttribute("data-price"),
+                    image: card.querySelector("img").src
+                };
 
-                    alert(`${item.title} telah ditambahkan ke keranjang!`);
-                });
-            });
+                fetch('/add-to-cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(item)
+                }).then(response => response.json())
+                  .then(data => {
+                      alert(`${item.title} telah ditambahkan ke keranjang!`);
+                      window.location.href = '{{ route('cart.index') }}';
+                  });
+            @else
+                // Redirect to login page if the user is not authenticated
+                window.location.href = '{{ route('login') }}';
+            @endauth
         });
-    </script>
+    });
+});
+</script>
 </body>
 
 </html>
