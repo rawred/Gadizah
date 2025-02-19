@@ -52,3 +52,5 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/update/{id}', [CartController::class, 'updateCart']);
+Route::delete('/cart/remove/{id}', [CartController::class, 'removeFromCart']);

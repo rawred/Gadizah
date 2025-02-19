@@ -356,27 +356,40 @@
                 <div class="underline"></div>
             </div>
 
-            <!-- Food Items -->
-            <div class="row">
-                @foreach($foodItems as $item)
-                    <div class="col-md-3">
-                        <div class="menu-item card" data-title="{{ $item->name }}" data-desc="{{ $item->description }}"
-                            data-price="{{ $item->price }}">
-                            <img src="{{ asset('storage/uploads/' . $item->photo) }}" class="card-img-top"
-                                alt="{{ $item->name }}" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $item->name }}</h5>
-                            </div>
-                            <div class="overlay">
-                                <h2 class="overlay-title">{{ $item->name }}</h2>
-                                <p class="overlay-description">{{ $item->description }}</p>
-                                <p class="overlay-price"><strong>HARGA:</strong> {{ $item->price }}</p>
-                                <button class="btn btn-primary">Masukkan ke Keranjang</button>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
+          <!-- Food Items -->
+
+<div class="row">
+    @foreach($foodItems as $item)
+        <div class="col-md-3">
+            <div class="menu-item card" 
+                 data-id="{{ $item->id }}"
+                 data-title="{{ $item->name }}"
+                 data-desc="{{ $item->description }}"
+                 data-price="{{ $item->price }}"
+                 data-stock="{{ $item->stock }}">
+                <img src="{{ asset('storage/uploads/' . $item->photo) }}" 
+                     class="card-img-top"
+                     alt="{{ $item->name }}" 
+                     style="width: 100%; height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ $item->name }}</h5>
+                    <p class="card-text text-muted">
+                        Stock: <span class="stock-indicator">{{ $item->stock }}</span>
+                    </p>
+                </div>
+                <div class="overlay">
+                    <h2 class="overlay-title">{{ $item->name }}</h2>
+                    <p class="overlay-description">{{ $item->description }}</p>
+                    <p class="overlay-price"><strong>HARGA:</strong> {{ $item->price }}</p>
+                    <p class="overlay-stock"><strong>STOCK:</strong> {{ $item->stock }}</p>
+                    <button class="btn btn-primary">
+                        Masukkan ke Keranjang
+                    </button>
+                </div>
             </div>
+        </div>
+    @endforeach
+</div>
 
             <!-- BEVERAGE Category -->
             <div class="menu-category">
@@ -385,26 +398,29 @@
             </div>
 
             <!-- Beverage Items -->
-            <div class="row">
-                @foreach($beverageItems as $item)
-                    <div class="col-md-3">
-                        <div class="menu-item card" data-title="{{ $item->name }}" data-desc="{{ $item->description }}"
-                            data-price="{{ $item->price }}">
-                            <img src="{{ asset('storage/uploads/' . $item->photo) }}" class="card-img-top"
-                                alt="{{ $item->name }}" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $item->name }}</h5>
-                            </div>
-                            <div class="overlay">
-                                <h2 class="overlay-title">{{ $item->name }}</h2>
-                                <p class="overlay-description">{{ $item->description }}</p>
-                                <p class="overlay-price"><strong>HARGA:</strong> {{ $item->price }}</p>
-                                <button class="btn btn-primary">Masukkan ke Keranjang</button>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
+           <!-- Beverage Items -->
+<div class="row">
+    @foreach($beverageItems as $item)
+        <div class="col-md-3">
+            <div class="menu-item card" data-id="{{ $item->id }}" data-title="{{ $item->name }}" data-desc="{{ $item->description }}"
+                data-price="{{ $item->price }}" data-stock="{{ $item->stock }}">
+                <img src="{{ asset('storage/uploads/' . $item->photo) }}" class="card-img-top"
+                    alt="{{ $item->name }}" style="width: 100%; height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ $item->name }}</h5>
+                    <p class="card-text"><strong>Stock:</strong> {{ $item->stock }}</p> <!-- Display Stock -->
+                </div>
+                <div class="overlay">
+                    <h2 class="overlay-title">{{ $item->name }}</h2>
+                    <p class="overlay-description">{{ $item->description }}</p>
+                    <p class="overlay-price"><strong>HARGA:</strong> {{ $item->price }}</p>
+                    <p class="overlay-stock"><strong>STOCK:</strong> {{ $item->stock }}</p> <!-- Display Stock in Overlay -->
+                    <button class="btn btn-primary">Masukkan ke Keranjang</button>
+                </div>
             </div>
+        </div>
+    @endforeach
+</div>
         </div>
     </section>
 
@@ -431,8 +447,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     title: card.getAttribute("data-title"),
                     description: card.getAttribute("data-desc"),
                     price: card.getAttribute("data-price"),
+                    stock: card.getAttribute("data-stock"), // Include stock
                     image: card.querySelector("img").src
                 };
+
+                // Check if stock is available
+                if (item.stock <= 0) {
+                    alert(`${item.title} is out of stock!`);
+                    return;
+                }
 
                 fetch('/add-to-cart', {
                     method: 'POST',
