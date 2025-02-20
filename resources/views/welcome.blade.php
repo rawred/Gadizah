@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Gadizah Homemade Food</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
@@ -36,6 +37,7 @@
             margin-right: -480px !important;
             margin-left: 500px !important;
         }
+
         /* HERO SECTION */
         .hero-section {
             display: flex;
@@ -256,45 +258,45 @@
 </head>
 
 <body>
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg bg-light">
-    <div class="container">
-        <a class="navbar-brand" href="{{ url('/') }}">
-            <img src="{{ asset('images/logo-1.png') }}" alt="Logo" style="width: 100px; height: auto;">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Menu</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
-                </li>
-                @auth
-                                <!-- Cart Button -->
-                                <li class="nav-item ms-2">
-                    <a class="btn btn-outline-dark" href="{{ route('cart.index') }}">
-                        <i class="bi bi-cart"></i> Cart
-                    </a>
-                </li>
-
-                    <li class="nav-item ms-4">
-                        <button class="btn btn-outline-dark" data-bs-toggle="offcanvas"
-                            data-bs-target="#profileSidebar">
-                            <i class="bi bi-person-circle"></i>
-                        </button>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url('/') }}">
+                <img src="{{ asset('images/logo-1.png') }}" alt="Logo" style="width: 100px; height: auto;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Menu</a>
                     </li>
-                @endauth
-            </ul>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                    @auth
+                        <!-- Cart Button -->
+                        <li class="nav-item ms-2">
+                            <a class="btn btn-outline-dark" href="{{ route('cart.index') }}">
+                                <i class="bi bi-cart"></i> Cart
+                            </a>
+                        </li>
+
+                        <li class="nav-item ms-4">
+                            <button class="btn btn-outline-dark" data-bs-toggle="offcanvas"
+                                data-bs-target="#profileSidebar">
+                                <i class="bi bi-person-circle"></i>
+                            </button>
+                        </li>
+                    @endauth
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -356,40 +358,37 @@
                 <div class="underline"></div>
             </div>
 
-          <!-- Food Items -->
+            <!-- Food Items -->
 
-<div class="row">
-    @foreach($foodItems as $item)
-        <div class="col-md-3">
-            <div class="menu-item card" 
-                 data-id="{{ $item->id }}"
-                 data-title="{{ $item->name }}"
-                 data-desc="{{ $item->description }}"
-                 data-price="{{ $item->price }}"
-                 data-stock="{{ $item->stock }}">
-                <img src="{{ asset('storage/uploads/' . $item->photo) }}" 
-                     class="card-img-top"
-                     alt="{{ $item->name }}" 
-                     style="width: 100%; height: 200px; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title">{{ $item->name }}</h5>
-                    <p class="card-text text-muted">
-                        Stock: <span class="stock-indicator">{{ $item->stock }}</span>
-                    </p>
-                </div>
-                <div class="overlay">
-                    <h2 class="overlay-title">{{ $item->name }}</h2>
-                    <p class="overlay-description">{{ $item->description }}</p>
-                    <p class="overlay-price"><strong>HARGA:</strong> {{ $item->price }}</p>
-                    <p class="overlay-stock"><strong>STOCK:</strong> {{ $item->stock }}</p>
-                    <button class="btn btn-primary">
-                        Masukkan ke Keranjang
-                    </button>
-                </div>
+            <div class="row">
+                @foreach($foodItems as $item)
+                    <div class="col-md-3">
+                    <div class="menu-item card" 
+     data-id="{{ $item->id }}"
+     data-title="{{ $item->name }}"
+     data-price="{{ $item->price }}"
+     data-stock="{{ $item->stock }}">
+                            <img src="{{ asset('storage/uploads/' . $item->photo) }}" class="card-img-top"
+                                alt="{{ $item->name }}" style="width: 100%; height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $item->name }}</h5>
+                                <p class="card-text text-muted">
+                                    Stock: <span class="stock-indicator">{{ $item->stock }}</span>
+                                </p>
+                            </div>
+                            <div class="overlay">
+                                <h2 class="overlay-title">{{ $item->name }}</h2>
+                                <p class="overlay-description">{{ $item->description }}</p>
+                                <p class="overlay-price"><strong>HARGA:</strong> {{ $item->price }}</p>
+                                <p class="overlay-stock"><strong>STOCK:</strong> {{ $item->stock }}</p>
+                                <button class="btn btn-primary">
+                                    Masukkan ke Keranjang
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
-        </div>
-    @endforeach
-</div>
 
             <!-- BEVERAGE Category -->
             <div class="menu-category">
@@ -398,29 +397,33 @@
             </div>
 
             <!-- Beverage Items -->
-           <!-- Beverage Items -->
-<div class="row">
-    @foreach($beverageItems as $item)
-        <div class="col-md-3">
-            <div class="menu-item card" data-id="{{ $item->id }}" data-title="{{ $item->name }}" data-desc="{{ $item->description }}"
-                data-price="{{ $item->price }}" data-stock="{{ $item->stock }}">
-                <img src="{{ asset('storage/uploads/' . $item->photo) }}" class="card-img-top"
-                    alt="{{ $item->name }}" style="width: 100%; height: 200px; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title">{{ $item->name }}</h5>
-                    <p class="card-text"><strong>Stock:</strong> {{ $item->stock }}</p> <!-- Display Stock -->
-                </div>
-                <div class="overlay">
-                    <h2 class="overlay-title">{{ $item->name }}</h2>
-                    <p class="overlay-description">{{ $item->description }}</p>
-                    <p class="overlay-price"><strong>HARGA:</strong> {{ $item->price }}</p>
-                    <p class="overlay-stock"><strong>STOCK:</strong> {{ $item->stock }}</p> <!-- Display Stock in Overlay -->
-                    <button class="btn btn-primary">Masukkan ke Keranjang</button>
-                </div>
+            <!-- Beverage Items -->
+            <div class="row">
+                @foreach($beverageItems as $item)
+                    <div class="col-md-3">
+                    <div class="menu-item card" 
+     data-id="{{ $item->id }}"
+     data-title="{{ $item->name }}"
+     data-price="{{ $item->price }}"
+     data-stock="{{ $item->stock }}">
+                            <img src="{{ asset('storage/uploads/' . $item->photo) }}" class="card-img-top"
+                                alt="{{ $item->name }}" style="width: 100%; height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $item->name }}</h5>
+                                <p class="card-text"><strong>Stock:</strong> {{ $item->stock }}</p> <!-- Display Stock -->
+                            </div>
+                            <div class="overlay">
+                                <h2 class="overlay-title">{{ $item->name }}</h2>
+                                <p class="overlay-description">{{ $item->description }}</p>
+                                <p class="overlay-price"><strong>HARGA:</strong> {{ $item->price }}</p>
+                                <p class="overlay-stock"><strong>STOCK:</strong> {{ $item->stock }}</p>
+                                <!-- Display Stock in Overlay -->
+                                <button class="btn btn-primary">Masukkan ke Keranjang</button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
-        </div>
-    @endforeach
-</div>
         </div>
     </section>
 
@@ -432,51 +435,57 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const addToCartButtons = document.querySelectorAll(".btn-primary");
+        document.addEventListener("DOMContentLoaded", function () {
+            const addToCartButtons = document.querySelectorAll(".btn-primary");
 
-    addToCartButtons.forEach(button => {
-        button.addEventListener("click", function (event) {
-            event.stopPropagation();
+            addToCartButtons.forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.stopPropagation();
 
-            // Check if the user is authenticated
-            @auth
-                const card = button.closest(".menu-item");
-                const item = {
-                    id: card.getAttribute("data-id"),
-                    title: card.getAttribute("data-title"),
-                    description: card.getAttribute("data-desc"),
-                    price: card.getAttribute("data-price"),
-                    stock: card.getAttribute("data-stock"), // Include stock
-                    image: card.querySelector("img").src
-                };
+                    @auth
+                        const card = button.closest(".menu-item");
+                        const item = {
+                            id: card.dataset.id, // Use dataset instead of getAttribute
+                            name: card.dataset.title,
+                            price: card.dataset.price,
+                            stock: card.dataset.stock,
+                            quantity: 1 // Default quantity
+                        };
 
-                // Check if stock is available
-                if (item.stock <= 0) {
-                    alert(`${item.title} is out of stock!`);
-                    return;
-                }
+                        if (item.stock <= 0) {
+                            alert(`${item.name} is out of stock!`);
+                            return;
+                        }
 
-                fetch('/add-to-cart', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(item)
-                }).then(response => response.json())
-                  .then(data => {
-                      alert(`${item.title} telah ditambahkan ke keranjang!`);
-                      window.location.href = '{{ route('cart.index') }}';
-                  });
-            @else
-                // Redirect to login page if the user is not authenticated
-                window.location.href = '{{ route('login') }}';
-            @endauth
+                        fetch('{{ route("cart.add") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            },
+                            body: JSON.stringify(item) // item contains the id, name, price, stock, and quantity
+                        })
+                            .then(response => {
+                                if (!response.ok) throw new Error('Network error');
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    alert(`${item.name} added to cart!`);
+                                    window.location.href = '{{ route("cart.index") }}';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Failed to add item to cart');
+                            });
+                    @else
+                        window.location.href = '{{ route("login") }}';
+                    @endauth
+                });
+            });
         });
-    });
-});
-</script>
+    </script>
 </body>
 
 </html>

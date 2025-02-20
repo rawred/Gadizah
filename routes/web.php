@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 
 /*
@@ -50,7 +51,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
 });
 
+
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('cart.add');
-Route::post('/cart/update/{id}', [CartController::class, 'updateCart']);
-Route::delete('/cart/remove/{id}', [CartController::class, 'removeFromCart']);
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/checkout/cod', [OrderController::class, 'codCheckout'])->name('checkout.cod');
+Route::delete('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+
+// Admin routes
+Route::get('/admin/orders', [OrderController::class, 'indexAdmin'])->name('admin.orders');
+Route::post('/admin/orders/{order}/accept', [OrderController::class, 'acceptOrder']);
+Route::post('/admin/orders/{order}/reject', [OrderController::class, 'rejectOrder']);

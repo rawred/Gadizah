@@ -10,120 +10,141 @@ class CartController extends Controller
     public function index()
     {
         $cart = session()->get('cart', []);
-        $cartItems = [];
         $total = 0;
+        $cartItems = [];
 
-        foreach ($cart as $item) {
-            $menuItem = Menu::find($item['id']);
+        foreach ($cart as $itemId => $details) {
+            $menuItem = Menu::find($itemId);
             if ($menuItem) {
-                $cartItem = [
-                    'id' => $menuItem->id,
+                $cartItems[] = [
+                    'id' => $itemId,
                     'name' => $menuItem->name,
                     'price' => $menuItem->price,
                     'photo' => $menuItem->photo,
+                    'quantity' => $details['quantity'],
                     'stock' => $menuItem->stock,
-                    'quantity' => $item['quantity'],
-                    'total' => $menuItem->price * $item['quantity']
+                    'total' => $menuItem->price * $details['quantity']
                 ];
-                $cartItems[] = $cartItem;
-                $total += $cartItem['total'];
+                $total += $menuItem->price * $details['quantity'];
             }
         }
 
         return view('cart', compact('cartItems', 'total'));
     }
 
-    public function addToCart(Request $request)
-    {
-        $request->validate(['id' => 'required|exists:menus,id']);
-        
-        $menuItem = Menu::findOrFail($request->id);
-        
-        // Check stock
-        if ($menuItem->stock < 1) {
-            return response()->json(['success' => false, 'message' => 'Item out of stock']);
-        }
-    
-        $cart = session()->get('cart', []);
-        
-        // Check if item already in cart
-        $exists = false;
-        foreach ($cart as &$item) {
-            if ($item['id'] == $request->id) {
-                if ($item['quantity'] >= $menuItem->stock) {
-                    return response()->json(['success' => false, 'message' => 'Maximum stock reached']);
-                }
-                $item['quantity']++;
-                $exists = true;
-                break;
-            }
-        }
-        
-        if (!$exists) {
-            $cart[] = [
-                'id' => $menuItem->id,
-                'quantity' => 1
-            ];
-        }
-    
-        // Decrease stock in the database
-        $menuItem->stock -= 1;
+    public function add(Request $request)
+{
+    $request->validate([
+        'id' => 'required|exists:menus,id', // Ensure the id exists in the menus table
+        'quantity' => 'nullable|integer|min:1' // Optional: Default to 1 if not provided
+    ]);
+
+    $menuItem = Menu::findOrFail($request->id);
+    $quantity = $request->quantity ?? 1; // Default to 1 if quantity is not provided
+
+    // Check stock
+    if ($menuItem->stock < $quantity) {
+        return response()->json(['success' => false, 'message' => 'Item out of stock']);
+    }
+
+    $cart = session()->get('cart', []);
+
+    // Check if item already in cart
+    if (isset($cart[$menuItem->id])) {
+        $cart[$menuItem->id]['quantity'] += $quantity;
+    } else {
+        $cart[$menuItem->id] = [
+            'id' => $menuItem->id,
+            'name' => $menuItem->name,
+            'price' => $menuItem->price,
+            'photo' => $menuItem->photo,
+            'quantity' => $quantity
+        ];
+    }
+
+    // Decrease stock in the database
+    $menuItem->stock -= $quantity;
+    $menuItem->save();
+
+    session()->put('cart', $cart);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Item added to cart',
+        'cart_count' => count($cart)
+    ]);
+}
+
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|integer|min:1'
+    ]);
+
+    $menuItem = Menu::findOrFail($id);
+    $cart = session()->get('cart', []);
+
+    if (!isset($cart[$id])) {
+        return response()->json(['success' => false, 'message' => 'Item not found in cart']);
+    }
+
+    $oldQuantity = $cart[$id]['quantity'];
+    $newQuantity = $request->quantity;
+    $quantityDifference = $newQuantity - $oldQuantity;
+
+    // Check if the new quantity is valid
+    if ($quantityDifference > $menuItem->stock) {
+        return response()->json(['success' => false, 'message' => 'Stok tidak mencukupi']);
+    }
+
+    // Update cart
+    $cart[$id]['quantity'] = $newQuantity;
+    $cart[$id]['total'] = $menuItem->price * $newQuantity; // Update total for the item
+
+    // Update stock
+    $menuItem->stock -= $quantityDifference;
+    $menuItem->save();
+
+    // Update session cart
+    session()->put('cart', $cart);
+
+    // Recalculate the overall total
+    $total = 0;
+    foreach ($cart as $item) {
+        $total += $item['total'];
+    }
+
+    // Log for debugging
+    \Log::info('Cart updated', [
+        'cart' => $cart,
+        'total' => $total,
+        'menuItem' => $menuItem
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'total' => $total
+    ]);
+}
+
+
+public function removeFromCart($id)
+{
+    $cart = session()->get('cart', []);
+    $menuItem = Menu::findOrFail($id);
+
+    if (isset($cart[$id])) {
+        // Return the stock to the database
+        $menuItem->stock += $cart[$id]['quantity'];
         $menuItem->save();
-    
-        session()->put('cart', $cart);
-        return response()->json(['success' => true]);
+
+        // Remove the item from the cart
+        unset($cart[$id]);
     }
 
-    public function updateCart(Request $request, $id)
-    {
-        $menuItem = Menu::findOrFail($id);
-        $cart = session()->get('cart', []);
-    
-        foreach ($cart as &$item) {
-            if ($item['id'] == $id) {
-                $oldQuantity = $item['quantity'];
-                $newQuantity = $request->quantity;
-    
-                // Calculate the difference in quantity
-                $quantityDifference = $newQuantity - $oldQuantity;
-    
-                // Check if the new quantity exceeds stock
-                if ($quantityDifference > $menuItem->stock) {
-                    return response()->json(['success' => false, 'message' => 'Quantity exceeds stock']);
-                }
-    
-                // Update the quantity in the cart
-                $item['quantity'] = $newQuantity;
-    
-                // Update the stock in the database
-                $menuItem->stock -= $quantityDifference;
-                $menuItem->save();
-                break;
-            }
-        }
-    
-        session()->put('cart', $cart);
-        return response()->json(['success' => true]);
-    }
+    // Update the session cart
+    session()->put('cart', $cart);
 
-    public function removeFromCart($id)
-    {
-        $cart = session()->get('cart', []);
-        $menuItem = Menu::findOrFail($id);
-    
-        foreach ($cart as $index => $item) {
-            if ($item['id'] == $id) {
-                // Increase stock in the database
-                $menuItem->stock += $item['quantity'];
-                $menuItem->save();
-    
-                // Remove the item from the cart
-                unset($cart[$index]);
-                break;
-            }
-        }
-    
-        session()->put('cart', array_values($cart));
-        return response()->json(['success' => true]);
-    }
+    return response()->json(['success' => true, 'message' => 'Item removed from cart']);
+}
 }
