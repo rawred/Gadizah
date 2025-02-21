@@ -61,7 +61,6 @@ public function rejectOrder(Order $order)
     $order->delete();
     return response()->json(['success' => true]);
 }
-
 public function codCheckout(Request $request)
 {
     $request->validate([

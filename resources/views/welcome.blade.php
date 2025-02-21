@@ -427,10 +427,66 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div>&copy; 2025 Gadizah Homemade Food. All rights reserved.</div>
-    </footer>
+<!-- Footer -->
+<footer class="text-white py-4 mt-5" style="background-color:#D85A2D;">
+    <div class="container">
+        <div class="row">
+            <!-- Alamat dan Peta -->
+            <div class="col-md-4 mb-4">
+                <h5 class="mb-3">Lokasi Kami</h5>
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.348208147937!2d110.41935257508076!3d-7.005782392975915!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e708c2d28f9e9a3%3A0x4d4d5e5a9b87e0e8!2sJl.%20Cinde%20Utara%20VII%20No.6%2C%20Jomblang%2C%20Kec.%20Candisari%2C%20Kota%20Semarang%2C%20Jawa%20Tengah%2050256!5e0!3m2!1sen!2sid!4v1717407164226!5m2!1sen!2sid" 
+                        width="100%" 
+                        height="200" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+                <p class="mt-2 mb-0">
+                    Jl. Cinde Utara VII No.6, Jomblang, Kec. Candisari,<br>
+                    Kota Semarang, Jawa Tengah 50256
+                </p>
+            </div>
+
+            <!-- Kontak -->
+            <div class="col-md-4 mb-4">
+                <h5 class="mb-3">Hubungi Kami</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <a href="https://wa.me/6282136027920" class="text-white text-decoration-none">
+                            <i class="bi bi-whatsapp me-2"></i>
+                            +62 821 3602 7920
+                        </a>
+                    </li>
+                    <li>
+                        <a href="tel:+6282136027920" class="text-white text-decoration-none">
+                            <i class="bi bi-telephone me-2"></i>
+                            +62 821 3602 7920
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Sosial Media -->
+            <div class="col-md-4">
+                <h5 class="mb-3">Ikuti Kami</h5>
+                <a href="https://www.instagram.com/gadiza.homemadefood" 
+                   class="text-white text-decoration-none"
+                   target="_blank">
+                    <i class="bi bi-instagram me-2"></i>
+                    @gadiza.homemadefood
+                </a>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="text-center mt-4 pt-3 border-top">
+            &copy; 2025 Gadizah Homemade Food. Seluruh hak cipta dilindungi.
+        </div>
+    </div>
+</footer>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
