@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Menu;
+use App\Models\Order;
 
 class CartController extends Controller
 {
@@ -147,4 +148,25 @@ public function removeFromCart($id)
 
     return response()->json(['success' => true, 'message' => 'Item removed from cart']);
 }
+
+public function storeCOD(Request $request)
+{
+    $request->validate([
+        'address' => 'required|string|max:255'
+    ]);
+
+    $cartItems = session()->get('cart', []);
+
+    $order = Order::create([
+        'user_id' => auth()->id(),
+        'items' => json_encode($cartItems),
+        'address' => $request->address,
+        'status' => 'pending'
+    ]);
+
+    session()->forget('cart');
+
+    return redirect()->route('home')->with('success', 'Order placed successfully! Waiting for admin approval.');
+}
+
 }

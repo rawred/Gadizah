@@ -61,5 +61,7 @@ Route::delete('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->n
 
 // Admin routes
 Route::get('/admin/orders', [OrderController::class, 'indexAdmin'])->name('admin.orders');
-Route::post('/admin/orders/{order}/accept', [OrderController::class, 'acceptOrder']);
-Route::post('/admin/orders/{order}/reject', [OrderController::class, 'rejectOrder']);
+Route::post('/admin/orders/{order}/accept', [OrderController::class, 'acceptOrder'])->name('orders.accept');
+Route::post('/admin/orders/{order}/reject', [OrderController::class, 'rejectOrder'])->name('orders.reject');
+
+Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
