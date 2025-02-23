@@ -98,19 +98,19 @@
             <h1 class="text-center">Menu Management</h1>
 
             <!-- Add New Menu Modal -->
-            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addMenuModal">Add New Menu</button>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addMenuModal">Tambah Menu Baru</button>
 
             <table id="menuTable" class="display table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Photo</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Stock</th>
-                        <th>Actions</th>
+                        <th>Foto</th>
+                        <th>Nama</th>
+                        <th>Harga</th>
+                        <th>Deskripsi</th>
+                        <th>Kategori</th>
+                        <th>Stok</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -125,7 +125,7 @@
                             <td>{{ $menu->stock }}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm edit-btn" data-id="{{ $menu->id }}">Edit</button>
-                                <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $menu->id }}">Delete</button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $menu->id }}">Hapus</button>
                             </td>
                         </tr>
                     @endforeach
@@ -141,41 +141,41 @@
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addMenuModalLabel">Add New Menu</h5>
+                        <h5 class="modal-title" id="addMenuModalLabel">Tambah Menu Baru</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="menuName" class="form-label">Name</label>
+                            <label for="menuName" class="form-label">Nama</label>
                             <input type="text" class="form-control" id="menuName" name="name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="menuPrice" class="form-label">Price</label>
+                            <label for="menuPrice" class="form-label">Harga</label>
                             <input type="number" class="form-control" id="menuPrice" name="price" required>
                         </div>
                         <div class="mb-3">
-                            <label for="menuDescription" class="form-label">Description</label>
+                            <label for="menuDescription" class="form-label">Deskripsi</label>
                             <textarea class="form-control" id="menuDescription" name="description"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="menuCategory" class="form-label">Category</label>
+                            <label for="menuCategory" class="form-label">Kategori</label>
                             <select class="form-control" id="menuCategory" name="category" required>
                                 <option value="FOOD">Food</option>
                                 <option value="BEVERAGE">Beverage</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="menuStock" class="form-label">Stock</label>
+                            <label for="menuStock" class="form-label">Stok</label>
                             <input type="number" class="form-control" id="menuStock" name="stock" required>
                         </div>
                         <div class="mb-3">
-                            <label for="menuPhoto" class="form-label">Photo</label>
+                            <label for="menuPhoto" class="form-label">Foto</label>
                             <input type="file" class="form-control" id="menuPhoto" name="photo" required>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Add Menu</button>
+                        <button type="submit" class="btn btn-primary">Tambah Menu</button>
                     </div>
                 </div>
             </form>

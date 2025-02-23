@@ -270,13 +270,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Menu</a>
+                        <a class="nav-link" href="#menu">Menu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
+                        <a class="nav-link" href="#contact">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
+                        <a class="nav-link" href="#contact">Contact</a>
                     </li>
                     @auth
                         <!-- Cart Button -->
@@ -343,7 +343,7 @@
     </div>
 
     <!-- Menu Section -->
-    <section class="menu-section">
+    <section id="menu" class="menu-section">
         <div class="container">
             <!-- Title -->
             <div class="menu-title-wrapper">
@@ -428,7 +428,7 @@
     </section>
 
 <!-- Footer -->
-<footer class="text-white py-4 mt-5" style="background-color:#D85A2D;">
+<footer id="contact" class="text-white py-4 mt-5" style="background-color:#D85A2D;">
     <div class="container">
         <div class="row">
             <!-- Alamat dan Peta -->

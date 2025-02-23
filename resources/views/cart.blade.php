@@ -35,21 +35,20 @@
 </head>
 
 <body>
-    @php
-        // Generate WhatsApp message template
-        $whatsappMessage = "Halo, saya ingin memesan:\n";
+@php
+    $whatsappMessage = "Halo, saya ingin memesan:\n";
 
-        if (isset($cartItems) && count($cartItems) > 0) {
-            foreach ($cartItems as $item) {
-                $whatsappMessage .= "- {$item['name']} (Qty: {$item['quantity']}) \n";
-            }
-            $whatsappMessage .= "Total: Rp" . number_format($total, 0, ',', '.') . "\n";
-            $whatsappMessage .= "Nama: [NAMA_PEMESAN]\n";
-            $whatsappMessage .= "Alamat: [ALAMAT_PENGIRIMAN]";
-        } else {
-            $whatsappMessage = "Halo, saya ingin bertanya tentang menu yang tersedia";
+    if (isset($cartItems) && count($cartItems) > 0) {
+        foreach ($cartItems as $item) {
+            $whatsappMessage .= "- {$item['name']} (Qty: {$item['quantity']}) \n";
         }
-    @endphp
+        $whatsappMessage .= "Total: Rp" . number_format($total, 0, ',', '.') . "\n";
+        $whatsappMessage .= "Nama: [NAMA_PEMESAN]\n";
+        $whatsappMessage .= "Alamat: [ALAMAT_PENGIRIMAN]";
+    } else {
+        $whatsappMessage = "Halo, saya ingin bertanya tentang menu yang tersedia";
+    }
+@endphp
 
     <div class="container mt-4">
     <div style="display: flex; flex-direction: row; align-items: center; gap: 20px;">
@@ -96,33 +95,35 @@
 
             <!-- Checkout Modal -->
             <div class="modal fade" id="checkoutModal" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Pilih Metode Pembayaran</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="{{ route('checkout.cod') }}" method="POST">
-                                @csrf
-                                <div class="mb-3">
-                                    <label>Alamat Pengiriman</label>
-                                    <textarea class="form-control" name="address" required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary">COD</button>
-                            </form>
-
-                            <hr>
-
-                            <!-- WhatsApp Button -->
-                            <button class="btn btn-success"
-                                onclick="window.open('https://wa.me/6282136027920?text={{ urlencode($whatsappMessage) }}', '_blank')">
-                                WhatsApp Order
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pilih Metode Pembayaran</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <div class="modal-body">
+            <form action="{{ route('checkout.cod') }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label>Alamat Pengiriman</label>
+                    <textarea class="form-control" name="address" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label>No. Telp (Aktif)</label>
+                    <input type="text" class="form-control" name="phone" required>
+                </div>
+                <button type="submit" class="btn btn-primary">COD</button>
+            </form>
+                <hr>
+
+                <!-- WhatsApp Button -->
+                <button class="btn btn-success" id="whatsappOrderBtn">
+                    WhatsApp Order
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
         @else
             <div class="alert alert-info">
                 Keranjang belanja Anda kosong.
@@ -134,31 +135,34 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
-        $(document).ready(function () {
-            // Remove Item
-            $('.remove-btn').on('click', function () {
-                const id = $(this).data('id');
-
-                if (confirm('Yakin ingin menghapus item ini?')) {
-                    $.ajax({
-                        url: `/cart/remove/${id}`, // Ensure this matches your route
-                        method: 'DELETE',
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function (response) {
-                            console.log('Remove successful', response);
-                            location.reload(); // Reload the page to reflect changes
-                        },
-                        error: function (xhr) {
-                            console.error('Remove failed', xhr.responseJSON);
-                            alert('Error: ' + xhr.responseJSON.message);
-                        }
-                    });
+$(document).ready(function () {
+    // WhatsApp Order Button Click
+    $('#whatsappOrderBtn').on('click', function () {
+        if (confirm('Are you sure you want to place this order via WhatsApp? This will clear your cart.')) {
+            // Clear the cart and update stock via AJAX
+            $.ajax({
+                url: '{{ route("cart.clear") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Redirect to WhatsApp after clearing the cart
+                        window.open('https://wa.me/6282136027920?text={{ urlencode($whatsappMessage) }}', '_blank');
+                    } else {
+                        alert('Failed to clear cart. Please try again.');
+                    }
+                },
+                error: function (xhr) {
+                    console.error('Error clearing cart:', xhr.responseJSON);
+                    alert('Error: ' + xhr.responseJSON.message);
                 }
             });
-        });
-    </script>
+        }
+    });
+});
+</script>
 </body>
 
 </html>

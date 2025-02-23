@@ -6,31 +6,64 @@ use Illuminate\Http\Request;
 use App\Models\Menu;
 use App\Models\Order;
 
+
 class CartController extends Controller
 {
+
+
     public function index()
+{
+    $cart = session()->get('cart', []);
+    $total = 0;
+    $cartItems = [];
+
+    foreach ($cart as $itemId => $details) {
+        $menuItem = Menu::find($itemId);
+        if ($menuItem) {
+            $cartItems[] = [
+                'id' => $itemId,
+                'name' => $menuItem->name,
+                'price' => $menuItem->price,
+                'photo' => $menuItem->photo,
+                'quantity' => $details['quantity'],
+                'stock' => $menuItem->stock,
+                'total' => $menuItem->price * $details['quantity']
+            ];
+            $total += $menuItem->price * $details['quantity'];
+        }
+    }
+
+    return view('cart', compact('cartItems', 'total'));
+}
+
+    public function clearCart()
     {
         $cart = session()->get('cart', []);
-        $total = 0;
-        $cartItems = [];
 
+        // Check stock availability
         foreach ($cart as $itemId => $details) {
             $menuItem = Menu::find($itemId);
-            if ($menuItem) {
-                $cartItems[] = [
-                    'id' => $itemId,
-                    'name' => $menuItem->name,
-                    'price' => $menuItem->price,
-                    'photo' => $menuItem->photo,
-                    'quantity' => $details['quantity'],
-                    'stock' => $menuItem->stock,
-                    'total' => $menuItem->price * $details['quantity']
-                ];
-                $total += $menuItem->price * $details['quantity'];
+            if ($menuItem && $menuItem->stock < $details['quantity']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Not enough stock for ' . $menuItem->name,
+                ]);
             }
         }
 
-        return view('cart', compact('cartItems', 'total'));
+        // Decrease stock for each item in the cart
+        foreach ($cart as $itemId => $details) {
+            $menuItem = Menu::find($itemId);
+            if ($menuItem) {
+                $menuItem->stock -= $details['quantity']; // Decrease stock
+                $menuItem->save();
+            }
+        }
+
+        // Clear the cart session
+        session()->forget('cart');
+
+        return response()->json(['success' => true, 'message' => 'Cart cleared and stock updated successfully']);
     }
 
     public function add(Request $request)
@@ -149,21 +182,26 @@ public function removeFromCart($id)
     return response()->json(['success' => true, 'message' => 'Item removed from cart']);
 }
 
+// app/Http/Controllers/OrderController.php
 public function storeCOD(Request $request)
 {
     $request->validate([
-        'address' => 'required|string|max:255'
+        'address' => 'required|string|max:255',
+        'phone' => 'required|string|max:15', // Add validation for phone number
     ]);
 
     $cartItems = session()->get('cart', []);
 
+    // Create the order
     $order = Order::create([
         'user_id' => auth()->id(),
         'items' => json_encode($cartItems),
         'address' => $request->address,
-        'status' => 'pending'
+        'phone' => $request->phone, // Save the phone number
+        'status' => 'pending', // Set status to pending
     ]);
 
+    // Clear the cart
     session()->forget('cart');
 
     return redirect()->route('home')->with('success', 'Order placed successfully! Waiting for admin approval.');
