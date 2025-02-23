@@ -12,29 +12,34 @@ class CartController extends Controller
 
 
     public function index()
-{
-    $cart = session()->get('cart', []);
-    $total = 0;
-    $cartItems = [];
+    {
+        $cart = session()->get('cart', []);
+        $total = 0;
+        $cartItems = [];
 
-    foreach ($cart as $itemId => $details) {
-        $menuItem = Menu::find($itemId);
-        if ($menuItem) {
-            $cartItems[] = [
-                'id' => $itemId,
-                'name' => $menuItem->name,
-                'price' => $menuItem->price,
-                'photo' => $menuItem->photo,
-                'quantity' => $details['quantity'],
-                'stock' => $menuItem->stock,
-                'total' => $menuItem->price * $details['quantity']
-            ];
-            $total += $menuItem->price * $details['quantity'];
+        foreach ($cart as $itemId => $details) {
+            $menuItem = Menu::find($itemId);
+            if ($menuItem) {
+                $cartItems[] = [
+                    'id' => $itemId,
+                    'name' => $menuItem->name,
+                    'price' => $menuItem->price,
+                    'photo' => $menuItem->photo,
+                    'quantity' => $details['quantity'],
+                    'stock' => $menuItem->stock,
+                    'total' => $menuItem->price * $details['quantity']
+                ];
+                $total += $menuItem->price * $details['quantity'];
+            }
         }
-    }
 
-    return view('cart', compact('cartItems', 'total'));
-}
+        // Fetch the user's order history
+        $orderHistory = Order::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('cart', compact('cartItems', 'total', 'orderHistory'));
+    }
 
     public function clearCart()
     {

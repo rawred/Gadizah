@@ -51,12 +51,12 @@
 @endphp
 
     <div class="container mt-4">
-    <div style="display: flex; flex-direction: row; align-items: center; gap: 20px;">
-        <a href="{{ url('/') }}">
-            <img src="{{ asset('images/logo-1.png') }}" alt="Example Image" style="width: 100px; height: auto;">
-        </a>
-        <h1 class="mb-4">Keranjang Belanja</h1>
-    </div>
+        <div style="display: flex; flex-direction: row; align-items: center; gap: 20px;">
+            <a href="{{ url('/') }}">
+                <img src="{{ asset('images/logo-1.png') }}" alt="Example Image" style="width: 100px; height: auto;">
+            </a>
+            <h1 class="mb-4">Keranjang Belanja</h1>
+        </div>
 
         @if(count($cartItems) > 0)
             <div class="row">
@@ -95,74 +95,127 @@
 
             <!-- Checkout Modal -->
             <div class="modal fade" id="checkoutModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Pilih Metode Pembayaran</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-            <form action="{{ route('checkout.cod') }}" method="POST">
-                @csrf
-                <div class="mb-3">
-                    <label>Alamat Pengiriman</label>
-                    <textarea class="form-control" name="address" required></textarea>
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Pilih Metode Pembayaran</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ route('checkout.cod') }}" method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <label>Alamat Pengiriman</label>
+                                    <textarea class="form-control" name="address" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label>No. Telp (Aktif)</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">COD</button>
+                            </form>
+                            <hr>
+                            <!-- WhatsApp Button -->
+                            <button class="btn btn-success" id="whatsappOrderBtn">
+                                WhatsApp Order
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label>No. Telp (Aktif)</label>
-                    <input type="text" class="form-control" name="phone" required>
-                </div>
-                <button type="submit" class="btn btn-primary">COD</button>
-            </form>
-                <hr>
-
-                <!-- WhatsApp Button -->
-                <button class="btn btn-success" id="whatsappOrderBtn">
-                    WhatsApp Order
-                </button>
             </div>
-        </div>
-    </div>
-</div>
         @else
             <div class="alert alert-info">
                 Keranjang belanja Anda kosong.
             </div>
         @endif
+
+    <!-- Order History Section -->
+<div class="card shadow mt-4">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="card-title mb-0">Riwayat Pesanan</h5>
     </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ID Pemesanan</th>
+                        <th>Tanggal</th>
+                        <th>Alamat</th>
+                        <th>No. Telp</th>
+                        <th>Produk</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($orderHistory as $order)
+                        <tr>
+                            <td>{{ $order->id }}</td>
+                            <td>{{ $order->created_at->format('d M Y H:i') }}</td>
+                            <td>{{ $order->address }}</td>
+                            <td>{{ $order->phone }}</td>
+                            <td>
+                                <ul class="list-unstyled">
+                                    @foreach(json_decode($order->items, true) as $item)
+                                        <li>{{ $item['name'] }} ({{ $item['quantity'] }})</li>
+                                    @endforeach
+                                </ul>
+                            </td>
+                            <td>
+                                Rp{{ number_format(array_reduce(json_decode($order->items, true), function($carry, $item) {
+                                    return $carry + ($item['price'] * $item['quantity']);
+                                }, 0), 0, ',', '.') }}
+                            </td>
+                            <td>
+                                <span class="badge 
+                                    @if($order->status == 'pending') badge-warning
+                                    @elseif($order->status == 'accepted') badge-success
+                                    @else badge-danger
+                                    @endif">
+                                    {{ ucfirst($order->status) }}
+                                </span>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
     <!-- Add Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
-$(document).ready(function () {
-    // WhatsApp Order Button Click
-    $('#whatsappOrderBtn').on('click', function () {
-        if (confirm('Are you sure you want to place this order via WhatsApp? This will clear your cart.')) {
-            // Clear the cart and update stock via AJAX
-            $.ajax({
-                url: '{{ route("cart.clear") }}',
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    if (response.success) {
-                        // Redirect to WhatsApp after clearing the cart
-                        window.open('https://wa.me/6282136027920?text={{ urlencode($whatsappMessage) }}', '_blank');
-                    } else {
-                        alert('Failed to clear cart. Please try again.');
-                    }
-                },
-                error: function (xhr) {
-                    console.error('Error clearing cart:', xhr.responseJSON);
-                    alert('Error: ' + xhr.responseJSON.message);
+        $(document).ready(function () {
+            // WhatsApp Order Button Click
+            $('#whatsappOrderBtn').on('click', function () {
+                if (confirm('Are you sure you want to place this order via WhatsApp? This will clear your cart.')) {
+                    // Clear the cart and update stock via AJAX
+                    $.ajax({
+                        url: '{{ route("cart.clear") }}',
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // Redirect to WhatsApp after clearing the cart
+                                window.open('https://wa.me/6282136027920?text={{ urlencode($whatsappMessage) }}', '_blank');
+                            } else {
+                                alert('Failed to clear cart. Please try again.');
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error('Error clearing cart:', xhr.responseJSON);
+                            alert('Error: ' + xhr.responseJSON.message);
+                        }
+                    });
                 }
             });
-        }
-    });
-});
-</script>
+        });
+    </script>
 </body>
 
 </html>

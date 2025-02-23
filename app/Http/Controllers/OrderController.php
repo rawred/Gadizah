@@ -47,8 +47,9 @@ public function storeCOD(Request $request)
 
 public function indexAdmin()
 {
-    $orders = Order::with('user')->where('status', 'pending')->get();
-    return view('admin.order', compact('orders'));
+    $pendingOrders = Order::with('user')->where('status', 'pending')->get();
+    $historyOrders = Order::with('user')->whereIn('status', ['accepted', 'rejected'])->get();
+    return view('admin.order', compact('pendingOrders', 'historyOrders'));
 }
 
 public function acceptOrder(Order $order)
@@ -73,7 +74,6 @@ public function rejectOrder(Order $order)
     $order->delete();
     return response()->json(['success' => true]);
 }
-
 
 public function codCheckout(Request $request)
 {
